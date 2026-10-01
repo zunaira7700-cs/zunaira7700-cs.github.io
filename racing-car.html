@@ -2,75 +2,87 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azaan Afnaan Adnan Race</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Real Car Race</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center;overflow:hidden}
-#wrap{width:360px;height:600px;margin:auto;position:relative;background:#111;border:3px solid #00ff88;border-radius:15px;overflow:hidden}
+#wrap{width:360px;height:600px;margin:auto;position:relative;background:#0e0e0e;border:3px solid #00ff88;border-radius:15px;overflow:hidden}
 canvas{display:block;width:100%;height:100%}
-#ui{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:space-between;padding:10px;box-sizing:border-box;z-index:5;font-weight:bold;background:linear-gradient(#000,transparent)}
-#ctrl{position:absolute;bottom:8px;left:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 10px;box-sizing:border-box;z-index:5}
-.b{width:75px;height:75px;background:rgba(0,255,136,0.2);border:2px solid #00ff88;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px}
-#nitro{width:90px;height:45px;background:#ff0040;border:2px solid #fff;border-radius:25px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
-#pop{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:20px;border-radius:20px;border:2px solid #00ff88;z-index:10;width:88%}
-button{padding:12px 30px;background:#00ff88;border:none;border-radius:20px;font-weight:bold;font-size:18px;margin-top:10px}
-.opt{padding:10px;margin:5px;border:2px solid #555;border-radius:12px;cursor:pointer;font-weight:bold}
-.opt.on{border-color:#00ff88;background:rgba(0,255,136,0.25);transform:scale(1.05)}
+#ui{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:space-between;padding:8px;box-sizing:border-box;z-index:5;font-size:13px;font-weight:bold}
+#ctrl{position:absolute;bottom:10px;left:0;width:100%;display:flex;justify-content:space-between;padding:0 10px;box-sizing:border-box;z-index:5}
+.b{width:65px;height:65px;background:rgba(255,255,255,0.15);border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+#jump{width:90px;height:44px;background:#00ff88;color:#000;border-radius:22px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+#pop{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;padding:18px;border-radius:20px;border:2px solid #00ff88;z-index:10;width:90%}
+.opt{padding:10px;margin:5px;border:2px solid #444;border-radius:12px;font-weight:bold}
+.opt.on{border-color:#00ff88;background:#00ff8822}
+button{padding:11px 30px;background:#00ff88;border:none;border-radius:22px;font-weight:bold;font-size:18px}
 </style>
 </head>
 <body>
-<h3 style="color:#00ff88;margin:6px">AZAAN AFNAAN ADNAN TURBO 🏁</h3>
 <div id="wrap">
-<div id="ui"><span id="sc">SCORE:0</span><span id="lv">LVL:1</span><span id="sp">0</span></div>
+<div id="ui"><span id="sc">0</span><span id="lv">LVL 1</span><span id="sp">0</span></div>
 <canvas id="c" width="360" height="600"></canvas>
-<div id="ctrl"><div class="b" id="L">◀</div><div id="nitro">🚀 NITRO</div><div class="b" id="R">▶</div></div>
-<div id="pop">
-<h3 style="color:#00ff88;margin:5px">CHOOSE YOUR HERO</h3>
-<div><div class="opt on" data-c="#00ff88" data-n="AZAAN">🟩 AZAAN</div><div class="opt" data-c="#ff1a1a" data-n="AFNAAN">🟥 AFNAAN</div><div class="opt" data-c="#0088ff" data-n="ADNAN">🟦 ADNAN</div></div>
-<h2 id="msg" style="margin:12px 0">READY?</h2>
-<button id="go">START RACE</button>
-</div>
+<div id="ctrl"><div class="b" id="L">◀</div><div id="jump">JUMP</div><div class="b" id="R">▶</div></div>
+<div id="pop"><h3 style="color:#00ff88;margin:5px">SELECT REAL CAR</h3>
+<div><div class="opt on" data-c="#00ff88" data-n="AZAAN">🟩 AZAAN - SUPRA</div><div class="opt" data-c="#ff1a1a" data-n="AFNAAN">🟥 AFNAAN - GTR</div><div class="opt" data-c="#2a7bff" data-n="ADNAN">🟦 ADNAN - BMW</div></div>
+<h3 id="msg">READY TO RACE?</h3><button id="go">START</button></div>
 </div>
 <script>
 let cv=document.getElementById('c'), X=cv.getContext('2d');
 let sc=document.getElementById('sc'), sp=document.getElementById('sp'), lv=document.getElementById('lv');
 let pop=document.getElementById('pop'), go=document.getElementById('go'), msg=document.getElementById('msg');
-let px=160, score=0, speed=6, ens=[], lines=[], keys={}, run=false, myC='#00ff88', myName='AZAAN', level=1, nitro=false;
-for(let i=0;i<12;i++) lines.push({y:i*80});
+let px=160, py=0, jv=0, jumping=false, score=0, speed=3, ens=[], lines=[], keys={}, run=false, myC='#00ff88', myName='AZAAN', level=1;
+for(let i=0;i<20;i++) lines.push({y:i*50});
 document.querySelectorAll('.opt').forEach(o=>{o.onclick=()=>{document.querySelectorAll('.opt').forEach(k=>k.classList.remove('on'));o.classList.add('on');myC=o.dataset.c;myName=o.dataset.n;}});
-function car(x,y,col,name,isEnemy){
+
+function realCar(x,y,col,name,enemy){
 X.save(); X.translate(x,y);
-X.fillStyle='rgba(0,0,0,0.4)'; X.fillRect(2,4,42,70);
-X.fillStyle=col; X.beginPath(); X.roundRect(0,0,46,70,8); X.fill();
-X.fillStyle='#0a0a0a'; X.fillRect(5,8,36,18);
-X.fillStyle='#fff'; X.font='bold 9px Arial'; X.textAlign='center'; X.fillText(name,23,42);
-X.fillStyle=isEnemy?'#ff0000':'#ffff00'; X.fillRect(5,62,11,6); X.fillRect(30,62,11,6);
-X.fillStyle='#aaffff'; X.fillRect(5,0,11,5); X.fillRect(30,0,11,5);
-X.fillStyle='#111'; X.fillRect(-3,12,5,16); X.fillRect(44,12,5,16); X.fillRect(-3,44,5,16); X.fillRect(44,44,5,16);
+if(py<0){ X.shadowColor=col; X.shadowBlur=18; }
+// shadow
+X.fillStyle='rgba(0,0,0,0.5)'; X.beginPath(); X.ellipse(22,58,20,6,0,0,Math.PI*2); X.fill();
+// tires
+X.fillStyle='#080808'; X.fillRect(-2,10,8,14); X.fillRect(36,10,8,14); X.fillRect(-2,36,8,14); X.fillRect(36,36,8,14);
+X.fillStyle='#555'; X.fillRect(0,13,4,8); X.fillRect(38,13,4,8); X.fillRect(0,39,4,8); X.fillRect(38,39,4,8);
+// body
+X.fillStyle=col; X.beginPath(); X.roundRect(0,2,44,54,7); X.fill();
+// roof line
+X.fillStyle='#00000055'; X.fillRect(0,20,44,2); X.fillRect(0,36,44,2);
+// windshield front & back
+X.fillStyle='#cceeff'; X.fillRect(5,6,34,10); X.fillRect(5,42,34,8);
+X.fillStyle='#00000088'; X.fillRect(5,6,34,2);
+// headlights
+X.fillStyle='#ffffaa'; X.beginPath(); X.arc(10,2,3,0,Math.PI*2); X.fill(); X.beginPath(); X.arc(34,2,3,0,Math.PI*2); X.fill();
+X.fillStyle='#ffffffaa'; X.fillRect(8,-2,6,4); X.fillRect(30,-2,6,4);
+// taillights
+X.fillStyle='#ff0000'; X.fillRect(6,54,8,3); X.fillRect(30,54,8,3);
+// number / name plate
+X.fillStyle='#fff'; X.font='bold 7px Arial'; X.textAlign='center'; X.fillText(name,22,31);
 X.restore();
 }
+
 function loop(){
 if(!run) return;
-let curSpeed = nitro? speed+8 : speed;
-if(keys.l) px-=7; if(keys.r) px+=7;
-if(px<35) px=35; if(px>280) px=280;
-for(let l of lines){l.y+=curSpeed; if(l.y>600) l.y=-80;}
-if(Math.random()<0.06){let names=['RIVAL','BOSS','POLICE']; ens.push({x:[40,110,180,250][Math.floor(Math.random()*4)],y:-80,c:['#ffcc00','#ff00ff','#888','#ff4400'][Math.floor(Math.random()*4)],n:names[Math.floor(Math.random()*3)]})}
-for(let i=ens.length-1;i>=0;i--){ens[i].y+=curSpeed; if(ens[i].y>650){ens.splice(i,1);score+=10; if(score%100==0){level++; speed+=0.7;}} let e=ens[i]; if(e&&e.x<px+46&&e.x+46>px&&e.y<510+70&&e.y+70>510){run=false;pop.style.display='block';msg.innerText=myName+' CRASHED! Score: '+score; go.innerText='RESTART'; if(navigator.vibrate) navigator.vibrate([100,50,100]);}}
-sc.innerText='SCORE:'+score; lv.innerText='LVL:'+level; sp.innerText=Math.floor(curSpeed*20)+' KM/H';
-X.fillStyle='#1b1b1b'; X.fillRect(0,0,360,600); X.fillStyle='#2a2a2a'; X.fillRect(30,0,300,600);
-X.fillStyle='#fff'; for(let l of lines){X.fillRect(28,l.y,6,35); X.fillRect(326,l.y,6,35);}
-for(let e of ens) car(e.x,e.y,e.c,e.n,true);
-car(px,510,myC,myName,false);
+if(keys.l) px-=4.5; if(keys.r) px+=4.5;
+if(px<30) px=30; if(px>286) px=286;
+if(jumping){ jv-=0.55; py+=jv; if(py>=0){py=0; jumping=false; jv=0;} }
+for(let l of lines){l.y+=speed; if(l.y>600) l.y=-50;}
+if(Math.random()<0.028){let xp=[32,102,172,242]; ens.push({x:xp[Math.floor(Math.random()*4)],y:-70,c:['#ffcc00','#ff44aa','#aaa','#ff5522'][Math.floor(Math.random()*4)],n:['TAXI','TRUCK','RIVAL'][Math.floor(Math.random()*3)]})}
+for(let i=ens.length-1;i>=0;i--){ens[i].y+=speed; if(ens[i].y>650){ens.splice(i,1);score+=10; if(score%100==0){level++; speed+=0.3;}} let e=ens[i]; if(e &&!jumping && e.x<px+38 && e.x+38>px && e.y<500+50 && e.y+50>500){run=false;pop.style.display='block';msg.innerText=myName+' CRASHED! '+score; go.innerText='RESTART';}}
+sc.innerText='SCORE:'+score; lv.innerText='LVL:'+level; sp.innerText=Math.floor(speed*28)+' KM/H';
+X.fillStyle='#151515'; X.fillRect(0,0,360,600); X.fillStyle='#222'; X.fillRect(28,0,304,600);
+X.fillStyle='#fff'; for(let l of lines){X.fillRect(26,l.y,4,22); X.fillRect(330,l.y,4,22); X.fillStyle='#fff3'; X.fillRect(178,l.y,2,14); X.fillStyle='#fff';}
+for(let e of ens) realCar(e.x,e.y,e.c,e.n,true);
+realCar(px,500+py,myC,myName,false);
 requestAnimationFrame(loop);
 }
-go.onclick=()=>{px=160;score=0;speed=6;level=1;ens=[];run=true;pop.style.display='none';loop();};
+function jump(){ if(!jumping && run){jumping=true; jv=9;}}
+go.onclick=()=>{px=160;py=0;jumping=false;score=0;speed=3;level=1;ens=[];run=true;pop.style.display='none';loop();};
 let k=(a,b)=>keys[a]=b;
 L.ontouchstart=e=>{e.preventDefault();k('l',1)}; L.ontouchend=e=>{e.preventDefault();k('l',0)};
 R.ontouchstart=e=>{e.preventDefault();k('r',1)}; R.ontouchend=e=>{e.preventDefault();k('r',0)};
-let N=document.getElementById('nitro'); N.ontouchstart=e=>{e.preventDefault();nitro=true; N.style.background='#ffff00'}; N.ontouchend=e=>{e.preventDefault();nitro=false; N.style.background='#ff0040'};
-N.onmousedown=()=>{nitro=true}; N.onmouseup=()=>{nitro=false};
-window.onkeydown=e=>{if(e.key=='ArrowLeft')k('l',1); if(e.key=='ArrowRight')k('r',1); if(e.key==' ')nitro=true}; window.onkeyup=e=>{if(e.key=='ArrowLeft')k('l',0); if(e.key=='ArrowRight')k('r',0); if(e.key==' ')nitro=false};
+document.getElementById('jump').ontouchstart=e=>{e.preventDefault();jump()};
+document.getElementById('jump').onclick=jump;
+window.onkeydown=e=>{if(e.key=='ArrowLeft')k('l',1); if(e.key=='ArrowRight')k('r',1); if(e.code=='Space')jump()}; window.onkeyup=e=>{if(e.key=='ArrowLeft')k('l',0); if(e.key=='ArrowRight')k('r',0)};
 </script>
 </body>
 </html>
