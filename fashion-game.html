@@ -1,1 +1,38 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion Studio - by Zunaira</title>
+<style>
+body{font-family:sans-serif;background:#ffe6f0;text-align:center;margin:0;padding:20px}
+.game-box{background:white;max-width:400px;margin:auto;padding:20px;border-radius:20px;box-shadow:0 10px 20px rgba(0,0,0,0.1)}
+#doll{font-size:120px;margin:20px 0;transition:0.3s}
+.btn{padding:10px 15px;margin:5px;border:none;border-radius:10px;cursor:pointer;background:#ff4da6;color:white;font-weight:bold}
+.btn:hover{background:#e60073}
+h1{color:#ff1a75}
+</style>
+</head>
+<body>
+<h1>👗 My Fashion Game 👗</h1>
+<div class="game-box">
+<div id="doll">👚</div>
+<h3 id="style-name">Casual Look</h3>
+<button class="btn" onclick="change('👗','Princess Dress')">Dress</button>
+<button class="btn" onclick="change('👚','Casual Top')">Top</button>
+<button class="btn" onclick="change('👘','Kimono Style')">Kimono</button>
+<button class="btn" onclick="change('🩱','Summer Look')">Swimsuit</button>
+<button class="btn" onclick="change('🥻','Desi Look')">Saree</button>
+<br><br>
+<button class="btn" style="background:#333" onclick="change('👑👗','Queen Look')">👑 Add Crown</button>
+</div>
+<p>Made by Zunaira CS</p>
+<script>
+function change(emoji,name){
+ document.getElementById('doll').innerHTML=emoji;
+ document.getElementById('style-name').innerHTML=name;
+}
+</script>
+</body>
+</html>
