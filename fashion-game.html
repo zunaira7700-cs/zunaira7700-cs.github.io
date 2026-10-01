@@ -1,37 +1,66 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fashion Studio - by Zunaira</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zunaira Racing</title>
 <style>
-body{font-family:sans-serif;background:#ffe6f0;text-align:center;margin:0;padding:20px}
-.game-box{background:white;max-width:400px;margin:auto;padding:20px;border-radius:20px;box-shadow:0 10px 20px rgba(0,0,0,0.1)}
-#doll{font-size:120px;margin:20px 0;transition:0.3s}
-.btn{padding:10px 15px;margin:5px;border:none;border-radius:10px;cursor:pointer;background:#ff4da6;color:white;font-weight:bold}
-.btn:hover{background:#e60073}
-h1{color:#ff1a75}
+body{margin:0;background:#111;color:white;font-family:sans-serif;text-align:center;overflow:hidden}
+h1{color:#00ff88;margin:5px;font-size:20px}
+#game{position:relative;width:300px;height:500px;margin:auto;background:#333;border:4px solid #555;overflow:hidden;border-radius:10px}
+#player{position:absolute;width:40px;height:70px;background:#00ff88;bottom:20px;left:130px;border-radius:8px;z-index:10;box-shadow:0 0 10px #00ff88}
+#player::after{content:'🏎️';font-size:40px;position:absolute;left:-2px;top:-5px}
+.enemy{position:absolute;width:40px;height:70px;background:#ff0040;border-radius:8px}
+.enemy::after{content:'🚗';font-size:40px;position:absolute;left:-2px;top:-5px}
+#score{font-size:18px;margin:5px}
+.btn{width:80px;height:80px;background:rgba(255,255,255,0.2);border-radius:50%;border:2px solid white;position:absolute;bottom:20px;font-size:30px}
+#left{left:20px} #right{right:20px}
+#start{padding:15px 40px;background:#00ff88;color:black;border:none;border-radius:30px;font-weight:bold;font-size:18px;margin-top:10px}
 </style>
 </head>
 <body>
-<h1>👗 My Fashion Game 👗</h1>
-<div class="game-box">
-<div id="doll">👚</div>
-<h3 id="style-name">Casual Look</h3>
-<button class="btn" onclick="change('👗','Princess Dress')">Dress</button>
-<button class="btn" onclick="change('👚','Casual Top')">Top</button>
-<button class="btn" onclick="change('👘','Kimono Style')">Kimono</button>
-<button class="btn" onclick="change('🩱','Summer Look')">Swimsuit</button>
-<button class="btn" onclick="change('🥻','Desi Look')">Saree</button>
-<br><br>
-<button class="btn" style="background:#333" onclick="change('👑👗','Queen Look')">👑 Add Crown</button>
+<h1>🏁 ZUNAIRA RACING 🏁</h1>
+<div id="score">Score: 0 | Speed: 0</div>
+<div id="game">
+<div id="player"></div>
 </div>
-<p>Made by Zunaira CS</p>
+<button class="btn" id="left" ontouchstart="moveLeft=true" ontouchend="moveLeft=false" onmousedown="moveLeft=true" onmouseup="moveLeft=false">⬅️</button>
+<button class="btn" id="right" ontouchstart="moveRight=true" ontouchend="moveRight=false" onmousedown="moveRight=true" onmouseup="moveRight=false">➡️</button>
+<br>
+<button id="start" onclick="startGame()">START GAME</button>
 <script>
-function change(emoji,name){
- document.getElementById('doll').innerHTML=emoji;
- document.getElementById('style-name').innerHTML=name;
+let player=document.getElementById('player'), game=document.getElementById('game'), scoreEl=document.getElementById('score');
+let px=130, score=0, speed=5, playing=false, moveLeft=false, moveRight=false, enemies=[], gameLoop;
+
+function startGame(){
+playing=true; score=0; speed=5; px=130; enemies.forEach(e=>e.el.remove()); enemies=[];
+document.getElementById('start').style.display='none';
+gameLoop=setInterval(update,20);
+}
+
+function update(){
+if(moveLeft && px>0) px-=7;
+if(moveRight && px<260) px+=7;
+player.style.left=px+'px';
+
+if(Math.random()<0.04){
+let el=document.createElement('div'); el.className='enemy';
+let ex=Math.floor(Math.random()*260); el.style.left=ex+'px'; el.style.top='-70px';
+game.appendChild(el); enemies.push({el:el,x:ex,y:-70});
+}
+
+for(let i=enemies.length-1;i>=0;i--){
+let e=enemies[i]; e.y+=speed; e.el.style.top=e.y+'px';
+if(e.y>500){e.el.remove(); enemies.splice(i,1); score++; speed+=0.05}
+if(e.y>400 && e.y<470 && Math.abs(e.x-px)<35){ gameOver(); }
+}
+scoreEl.innerText='Score: '+score+' | Speed: '+Math.floor(speed*20);
+}
+
+function gameOver(){
+playing=false; clearInterval(gameLoop);
+document.getElementById('start').style.display='inline-block';
+document.getElementById('start').innerText='GAME OVER! SCORE: '+score+' - PLAY AGAIN';
 }
 </script>
 </body>
