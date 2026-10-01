@@ -3,75 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zunaira Turbo Real Cars</title>
+<title>Azaan Afnaan Adnan Race</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center;overflow:hidden}
-#wrap{width:360px;height:600px;margin:auto;position:relative;background:#222;border:2px solid #00ff88;border-radius:15px;overflow:hidden}
+#wrap{width:360px;height:600px;margin:auto;position:relative;background:#111;border:3px solid #00ff88;border-radius:15px;overflow:hidden}
 canvas{display:block;width:100%;height:100%}
-#ui{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:space-between;padding:10px;box-sizing:border-box;z-index:5;font-weight:bold;background:rgba(0,0,0,0.5)}
-#ctrl{position:absolute;bottom:10px;left:0;width:100%;display:flex;justify-content:space-between;padding:0 20px;box-sizing:border-box;z-index:5}
-.b{width:100px;height:100px;background:rgba(255,255,255,0.1);border:2px solid #00ff88;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:35px}
-#pop{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.92);padding:20px;border-radius:20px;border:2px solid #00ff88;z-index:10;width:85%}
-button{padding:12px 30px;background:#00ff88;border:none;border-radius:20px;font-weight:bold;font-size:18px}
-.opt{display:inline-block;padding:8px 12px;margin:4px;border:2px solid #555;border-radius:10px}
-.opt.on{border-color:#00ff88;background:rgba(0,255,136,0.2)}
+#ui{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:space-between;padding:10px;box-sizing:border-box;z-index:5;font-weight:bold;background:linear-gradient(#000,transparent)}
+#ctrl{position:absolute;bottom:8px;left:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 10px;box-sizing:border-box;z-index:5}
+.b{width:75px;height:75px;background:rgba(0,255,136,0.2);border:2px solid #00ff88;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px}
+#nitro{width:90px;height:45px;background:#ff0040;border:2px solid #fff;border-radius:25px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
+#pop{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:20px;border-radius:20px;border:2px solid #00ff88;z-index:10;width:88%}
+button{padding:12px 30px;background:#00ff88;border:none;border-radius:20px;font-weight:bold;font-size:18px;margin-top:10px}
+.opt{padding:10px;margin:5px;border:2px solid #555;border-radius:12px;cursor:pointer;font-weight:bold}
+.opt.on{border-color:#00ff88;background:rgba(0,255,136,0.25);transform:scale(1.05)}
 </style>
 </head>
 <body>
-<h3 style="color:#00ff88;margin:5px">ZUNAIRA REAL CARS 🏁</h3>
+<h3 style="color:#00ff88;margin:6px">AZAAN AFNAAN ADNAN TURBO 🏁</h3>
 <div id="wrap">
-<div id="ui"><span id="sc">0</span><span id="sp">0 KM/H</span></div>
+<div id="ui"><span id="sc">SCORE:0</span><span id="lv">LVL:1</span><span id="sp">0</span></div>
 <canvas id="c" width="360" height="600"></canvas>
-<div id="ctrl"><div class="b" id="L">◀</div><div class="b" id="R">▶</div></div>
+<div id="ctrl"><div class="b" id="L">◀</div><div id="nitro">🚀 NITRO</div><div class="b" id="R">▶</div></div>
 <div id="pop">
-<div id="cars"><div class="opt on" data-c="#00ff88">GREEN</div><div class="opt" data-c="#ff1a1a">RED FERRARI</div><div class="opt" data-c="#0088ff">BLUE LAMBO</div></div>
-<h2 id="msg">READY TO RACE?</h2>
-<button id="go">START</button>
+<h3 style="color:#00ff88;margin:5px">CHOOSE YOUR HERO</h3>
+<div><div class="opt on" data-c="#00ff88" data-n="AZAAN">🟩 AZAAN</div><div class="opt" data-c="#ff1a1a" data-n="AFNAAN">🟥 AFNAAN</div><div class="opt" data-c="#0088ff" data-n="ADNAN">🟦 ADNAN</div></div>
+<h2 id="msg" style="margin:12px 0">READY?</h2>
+<button id="go">START RACE</button>
 </div>
 </div>
 <script>
 let cv=document.getElementById('c'), X=cv.getContext('2d');
-let sc=document.getElementById('sc'), sp=document.getElementById('sp');
+let sc=document.getElementById('sc'), sp=document.getElementById('sp'), lv=document.getElementById('lv');
 let pop=document.getElementById('pop'), go=document.getElementById('go'), msg=document.getElementById('msg');
-let px=160, score=0, speed=5, ens=[], lines=[], keys={}, run=false, myC='#00ff88';
+let px=160, score=0, speed=6, ens=[], lines=[], keys={}, run=false, myC='#00ff88', myName='AZAAN', level=1, nitro=false;
 for(let i=0;i<12;i++) lines.push({y:i*80});
-document.querySelectorAll('.opt').forEach(o=>{o.onclick=()=>{document.querySelectorAll('.opt').forEach(k=>k.classList.remove('on'));o.classList.add('on');myC=o.dataset.c}});
-function car(x,y,col,isEnemy){
+document.querySelectorAll('.opt').forEach(o=>{o.onclick=()=>{document.querySelectorAll('.opt').forEach(k=>k.classList.remove('on'));o.classList.add('on');myC=o.dataset.c;myName=o.dataset.n;}});
+function car(x,y,col,name,isEnemy){
 X.save(); X.translate(x,y);
-// shadow
-X.fillStyle='rgba(0,0,0,0.5)'; X.fillRect(2,5,40,68);
-// body
-X.fillStyle=col; X.fillRect(0,0,44,68); X.fillStyle='#111'; X.fillRect(4,6,36,20); // windshield
-X.fillStyle=col; X.fillRect(2,26,40,22);
-// lights
-X.fillStyle=isEnemy?'#ff0000':'#ffffaa'; X.fillRect(4,60,10,6); X.fillRect(30,60,10,6);
-X.fillStyle='#00ffff'; X.fillRect(4,0,10,4); X.fillRect(30,0,10,4);
-// wheels
-X.fillStyle='#000'; X.fillRect(-3,10,5,18); X.fillRect(42,10,5,18); X.fillRect(-3,40,5,18); X.fillRect(42,40,5,18);
+X.fillStyle='rgba(0,0,0,0.4)'; X.fillRect(2,4,42,70);
+X.fillStyle=col; X.beginPath(); X.roundRect(0,0,46,70,8); X.fill();
+X.fillStyle='#0a0a0a'; X.fillRect(5,8,36,18);
+X.fillStyle='#fff'; X.font='bold 9px Arial'; X.textAlign='center'; X.fillText(name,23,42);
+X.fillStyle=isEnemy?'#ff0000':'#ffff00'; X.fillRect(5,62,11,6); X.fillRect(30,62,11,6);
+X.fillStyle='#aaffff'; X.fillRect(5,0,11,5); X.fillRect(30,0,11,5);
+X.fillStyle='#111'; X.fillRect(-3,12,5,16); X.fillRect(44,12,5,16); X.fillRect(-3,44,5,16); X.fillRect(44,44,5,16);
 X.restore();
 }
 function loop(){
 if(!run) return;
-if(keys.l) px-=6; if(keys.r) px+=6;
+let curSpeed = nitro? speed+8 : speed;
+if(keys.l) px-=7; if(keys.r) px+=7;
 if(px<35) px=35; if(px>280) px=280;
-for(let l of lines){l.y+=speed; if(l.y>600) l.y=-80;}
-if(Math.random()<0.05){ens.push({x:[45,115,185,255][Math.floor(Math.random()*4)],y:-80,c:['#ff1a1a','#ffcc00','#0088ff','#ff00ff'][Math.floor(Math.random()*4)]})}
-for(let i=ens.length-1;i>=0;i--){ens[i].y+=speed; if(ens[i].y>650){ens.splice(i,1);score+=10; if(score%50==0) speed+=0.5;} let e=ens[i]; if(e&&e.x<px+44&&e.x+44>px&&e.y<510+68&&e.y+68>510){run=false;pop.style.display='block';msg.innerText='CRASH! Score: '+score; go.innerText='RESTART'; if(navigator.vibrate) navigator.vibrate(200);}}
-sc.innerText='SCORE: '+score; sp.innerText=Math.floor(speed*25)+' KM/H';
-X.fillStyle='#1a1a1a'; X.fillRect(0,0,360,600); X.fillStyle='#2b2b2b'; X.fillRect(30,0,300,600);
-// road lines
-X.fillStyle='#fff'; for(let l of lines){X.fillRect(30,l.y,6,35); X.fillRect(324,l.y,6,35);}
-X.fillStyle='#ffff00'; X.setLineDash([20,20]); X.beginPath(); X.moveTo(180,0); X.lineTo(180,600); X.strokeStyle='#ffff00'; X.lineWidth=3; X.stroke(); X.setLineDash([]);
-for(let e of ens) car(e.x,e.y,e.c,true);
-car(px,510,myC,false);
+for(let l of lines){l.y+=curSpeed; if(l.y>600) l.y=-80;}
+if(Math.random()<0.06){let names=['RIVAL','BOSS','POLICE']; ens.push({x:[40,110,180,250][Math.floor(Math.random()*4)],y:-80,c:['#ffcc00','#ff00ff','#888','#ff4400'][Math.floor(Math.random()*4)],n:names[Math.floor(Math.random()*3)]})}
+for(let i=ens.length-1;i>=0;i--){ens[i].y+=curSpeed; if(ens[i].y>650){ens.splice(i,1);score+=10; if(score%100==0){level++; speed+=0.7;}} let e=ens[i]; if(e&&e.x<px+46&&e.x+46>px&&e.y<510+70&&e.y+70>510){run=false;pop.style.display='block';msg.innerText=myName+' CRASHED! Score: '+score; go.innerText='RESTART'; if(navigator.vibrate) navigator.vibrate([100,50,100]);}}
+sc.innerText='SCORE:'+score; lv.innerText='LVL:'+level; sp.innerText=Math.floor(curSpeed*20)+' KM/H';
+X.fillStyle='#1b1b1b'; X.fillRect(0,0,360,600); X.fillStyle='#2a2a2a'; X.fillRect(30,0,300,600);
+X.fillStyle='#fff'; for(let l of lines){X.fillRect(28,l.y,6,35); X.fillRect(326,l.y,6,35);}
+for(let e of ens) car(e.x,e.y,e.c,e.n,true);
+car(px,510,myC,myName,false);
 requestAnimationFrame(loop);
 }
-go.onclick=()=>{px=160;score=0;speed=6;ens=[];run=true;pop.style.display='none';loop();};
+go.onclick=()=>{px=160;score=0;speed=6;level=1;ens=[];run=true;pop.style.display='none';loop();};
 let k=(a,b)=>keys[a]=b;
 L.ontouchstart=e=>{e.preventDefault();k('l',1)}; L.ontouchend=e=>{e.preventDefault();k('l',0)};
 R.ontouchstart=e=>{e.preventDefault();k('r',1)}; R.ontouchend=e=>{e.preventDefault();k('r',0)};
-L.onmousedown=()=>k('l',1); L.onmouseup=()=>k('l',0); R.onmousedown=()=>k('r',1); R.onmouseup=()=>k('r',0);
-window.onkeydown=e=>{if(e.key=='ArrowLeft')k('l',1); if(e.key=='ArrowRight')k('r',1)}; window.onkeyup=e=>{if(e.key=='ArrowLeft')k('l',0); if(e.key=='ArrowRight')k('r',0)};
+let N=document.getElementById('nitro'); N.ontouchstart=e=>{e.preventDefault();nitro=true; N.style.background='#ffff00'}; N.ontouchend=e=>{e.preventDefault();nitro=false; N.style.background='#ff0040'};
+N.onmousedown=()=>{nitro=true}; N.onmouseup=()=>{nitro=false};
+window.onkeydown=e=>{if(e.key=='ArrowLeft')k('l',1); if(e.key=='ArrowRight')k('r',1); if(e.key==' ')nitro=true}; window.onkeyup=e=>{if(e.key=='ArrowLeft')k('l',0); if(e.key=='ArrowRight')k('r',0); if(e.key==' ')nitro=false};
 </script>
 </body>
 </html>
